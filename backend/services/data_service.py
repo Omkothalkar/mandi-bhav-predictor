@@ -1,20 +1,27 @@
 import pandas as pd
-import os
 import joblib
-from datetime import datetime
+from pathlib import Path
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
 
 class DataService:
-    def __init__(self, data_path="data/processed/cleaned_dataset.csv", models_dir="models"):
-        self.data_path = data_path
-        self.models_dir = models_dir
+    def __init__(self, data_path=None, models_dir=None):
+        self.data_path = Path(data_path) if data_path else PROJECT_ROOT / "data" / "processed" / "cleaned_dataset.csv"
+        self.models_dir = Path(models_dir) if models_dir else PROJECT_ROOT / "models"
         self.df = None
         self.supported_pairs = []
         self._load_data()
         self._load_supported_mandis()
 
     def _load_data(self):
-        if not os.path.exists(self.data_path):
-            raise FileNotFoundError(f"Data file not found at {self.data_path}")
+        if not self.data_path.is_file():
+            raise FileNotFoundError(
+                f"Data file not found at {self.data_path}. "
+                "Generate it before starting the API with "
+                "python scripts/prepare_deployment_data.py."
+            )
         # Only loading essential columns to save memory
         self.df = pd.read_csv(self.data_path, usecols=['Reported Date', 'State Name', 'District Name', 'Mandi', 'Crop', 'Modal Price (Rs./Quintal)', 'Arrivals (Tonnes)'])
         self.df['Reported Date'] = pd.to_datetime(self.df['Reported Date'])
@@ -29,12 +36,11 @@ class DataService:
         self.monthly_df['Date'] = self.monthly_df['YearMonth'].dt.to_timestamp()
         
     def _load_supported_mandis(self):
-        if not os.path.exists(self.models_dir):
+        if not self.models_dir.is_dir():
             return
             
-        for filename in os.listdir(self.models_dir):
-            if filename.endswith(".joblib"):
-                path = os.path.join(self.models_dir, filename)
+        for path in self.models_dir.glob("*.joblib"):
+            if path.name.endswith(".joblib"):
                 try:
                     data = joblib.load(path)
                     metadata = data.get('metadata', {})
@@ -55,7 +61,7 @@ class DataService:
                                 'strategy': metadata.get('strategy', 'naive')
                             })
                 except Exception as e:
-                    print(f"Error loading {filename}: {e}")
+                    print(f"Error loading {path.name}: {e}")
 
     def get_supported_mandis(self):
         return self.supported_pairs
