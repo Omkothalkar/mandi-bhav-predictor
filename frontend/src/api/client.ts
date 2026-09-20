@@ -21,24 +21,32 @@ export const api = {
         const response = await apiClient.get('/health');
         return response.data;
     },
-    
+
     getAvailableMandis: async (): Promise<AvailableMandisResponse> => {
         const response = await apiClient.get('/available-mandis');
         return response.data;
     },
-    
-    getHistoricalPrices: async (crop: string, mandi: string): Promise<HistoricalPricesResponse> => {
-        // Make sure to encode the mandi name as it contains spaces and hyphens
-        const response = await apiClient.get(`/historical-prices?crop=${encodeURIComponent(crop)}&mandi=${encodeURIComponent(mandi)}`);
+
+    getHistoricalPrices: async (
+        crop: string,
+        mandi: string
+    ): Promise<HistoricalPricesResponse> => {
+        const response = await apiClient.get(
+            `/historical-prices?crop=${encodeURIComponent(crop)}&mandi=${encodeURIComponent(mandi)}`
+        );
         return response.data;
     },
-    
-    generateForecast: async (request: ForecastRequest): Promise<ForecastResponse> => {
+
+    generateForecast: async (
+        request: ForecastRequest
+    ): Promise<ForecastResponse> => {
         const response = await apiClient.post('/forecast', request);
         return response.data;
     },
-    
-    compareMandis: async (request: CompareRequest): Promise<CompareResponse> => {
+
+    compareMandis: async (
+        request: CompareRequest
+    ): Promise<CompareResponse> => {
         const response = await apiClient.post('/compare', request);
         return response.data;
     }
