@@ -83,6 +83,18 @@ After preparing the data, run:
 pytest backend/tests tests
 ```
 
+## Deploy the API on Render
+
+Create a **Python web service** with this repository as its root directory.
+
+```text
+Build Command: python -m pip install -r requirements.txt && python scripts/prepare_deployment_data.py
+Start Command: python -m uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+Health Check Path: /api/health
+```
+
+The build command downloads the public source files and runs the existing ingestion and cleaning pipeline. It verifies `data/processed/cleaned_dataset.csv` before deployment, while `.gitignore` continues to keep the generated files out of Git. No custom environment variables are required: Render provides `PORT`, and `.python-version` pins Python 3.11.
+
 ## Important limitations
 
 - The historical source data ends in June 2017. This project does not provide live 2026 mandi prices.
