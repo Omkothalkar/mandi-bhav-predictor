@@ -1,29 +1,33 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.api.endpoints import router as api_router
+
+from backend.api.routes import router
+
 
 app = FastAPI(
-    title="Agmarknet Forecasting API",
-    description="API for historical agricultural prices, forecasts, and mandi comparisons.",
-    version="1.0.0"
+    title="AgriMandi API",
+    description="Agricultural Market Price Forecasting & Decision Support API",
+    version="1.0.0",
 )
 
-# CORS configuration for local frontend development
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost:5173",
         "http://localhost:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:3001",
+        "https://mandi-bhav-predictor.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(api_router, prefix="/api")
+app.include_router(router, prefix="/api")
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+@app.get("/")
+def root():
+    return {
+        "message": "AgriMandi API is running",
+        "docs": "/docs",
+    }
