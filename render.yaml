@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: mandi-bhav-predictor-api
+    runtime: python
+    buildCommand: python -m pip install -r requirements.txt && python scripts/prepare_deployment_data.py
+    startCommand: python -m uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
