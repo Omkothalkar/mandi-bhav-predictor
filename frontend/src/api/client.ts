@@ -1,4 +1,3 @@
-```typescript
 import axios from 'axios';
 import type {
     AvailableMandisResponse,
@@ -51,4 +50,3 @@ export const api = {
         return response.data;
     }
 };
-```
