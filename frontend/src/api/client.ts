@@ -1,3 +1,4 @@
+```typescript
 import axios from 'axios';
 import type {
     AvailableMandisResponse,
@@ -9,7 +10,7 @@ import type {
 } from '../types/api.types';
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8000/api',
+    baseURL: 'https://mandi-bhav-predictor.onrender.com/api',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -42,3 +43,4 @@ export const api = {
         return response.data;
     }
 };
+```
